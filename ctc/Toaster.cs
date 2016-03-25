@@ -14,28 +14,21 @@ namespace Ctc
         public void ShowToast(string title, string text)
         {
             // Get a toast XML template
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText04);
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 
             // Fill in the text elements
             XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
-            //for (int i = 0; i < stringElements.Length; i++)
-            //{
-            //    stringElements[i].AppendChild(toastXml.CreateTextNode(text));
-            //}
 
-            stringElements[0].AppendChild(toastXml.CreateTextNode(title));
-            stringElements[1].AppendChild(toastXml.CreateTextNode(text));
+            SetValue(toastXml, stringElements, 0, title);
+            SetValue(toastXml, stringElements, 1, text);
 
-            // Specify the absolute path to an image
-            //string imagePath = "file:///" + Path.GetFullPath("toastImageAndText.png");
-            //XmlNodeList imageElements = toastXml.GetElementsByTagName("image");
-            //imageElements[0].Attributes.GetNamedItem("src").NodeValue = imagePath;
+            //SetIcon(toastXml);  // Icons not supported yet
 
             // Create the toast and attach event listeners
             ToastNotification toast = new ToastNotification(toastXml);
-            toast.Activated += ToastActivated;
-            toast.Dismissed += ToastDismissed;
-            toast.Failed += ToastFailed;
+            toast.Activated += (s, e) => { };
+            toast.Dismissed += (s, e) => { };
+            toast.Failed += (s, e) => { };
 
             // Show the toast. Be sure to specify the AppUserModelId on your application's shortcut!
             ToastNotificationManager.CreateToastNotifier(Program.APP_ID).Show(toast);
@@ -58,6 +51,14 @@ namespace Ctc
                 return true;
             }
             return false;
+        }
+
+        private static void SetIcon(XmlDocument toastXml)
+        {
+            // Specify the absolute path to an image
+            string imagePath = "file:///" + Path.GetFullPath("toastImageAndText.png");
+            XmlNodeList imageElements = toastXml.GetElementsByTagName("image");
+            imageElements[0].Attributes.GetNamedItem("src").NodeValue = imagePath;
         }
 
         private void InstallShortcut(string shortcutPath)
@@ -85,16 +86,12 @@ namespace Ctc
             ErrorHelper.VerifySucceeded(newShortcutSave.Save(shortcutPath, true));
         }
 
-        private void ToastActivated(ToastNotification sender, object args)
+        private void SetValue(XmlDocument toastXml, XmlNodeList stringElements, int idx, string value)
         {
-        }
-
-        private void ToastDismissed(ToastNotification sender, ToastDismissedEventArgs args)
-        {
-        }
-
-        private void ToastFailed(ToastNotification sender, ToastFailedEventArgs args)
-        {
+            if (stringElements.Count > idx)
+            {
+                stringElements[idx].AppendChild(toastXml.CreateTextNode(value));
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Ctc
 {
@@ -8,10 +9,8 @@ namespace Ctc
 
         public static void Main(string[] args)
         {
-
             if (args == null || args.Length == 0)
             {
-
                 var toaster = new Toaster();
                 toaster.TryCreateShortcut();
 
@@ -20,7 +19,7 @@ namespace Ctc
             else
             {
                 var sep = " ";
-                Console.WriteLine($"Args! {string.Join (sep, args)}");
+                Console.WriteLine($"Args! {string.Join(sep, args)}");
                 Console.WriteLine("Press enter");
                 Console.ReadLine();
             }
@@ -41,8 +40,8 @@ namespace Ctc
                     continue;
                 }
 
-                Console.WriteLine("read:  " + input);
-                toaster.ShowToast("Hello world", input ?? "nothing to see here");
+                Debug.WriteLine("read:  " + input);
+                toaster.ShowToast("CTC", input);
             }
         }
     }
